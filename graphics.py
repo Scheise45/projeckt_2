@@ -11,11 +11,11 @@ s = [
 pygame.init()
 screen = pygame.display.set_mode((600, 600))
 screen.fill("white")
-hero = pygame.image.load("hero.jpg")
-sky = pygame.image.load("sky.jpg")
-wall = pygame.image.load("wall.jpg")
-lianas = pygame.image.load("lianas.jpg")
-stone = pygame.image.load("stone.jpg")
+hero = pygame.image.load("picture/hero.jpg")
+sky = pygame.image.load("picture/sky.jpg")
+wall = pygame.image.load("picture/wall.jpg")
+lianas = pygame.image.load("picture/lianas.jpg")
+stone = pygame.image.load("picture/stone.jpg")
 fils = [sky, wall, lianas, stone, hero]
 running = True
 while running:
