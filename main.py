@@ -59,8 +59,9 @@ def confirm_exit():
         pygame.draw.rect(screen, GRAY, confirm_rect)
         pygame.draw.rect(screen, BLACK, confirm_rect, 3)
 
+        s = "Вы действительно хотите выйти?"
         draw_text_centered(
-            screen, "Вы действительно хотите выйти?", small_font, confirm_rect, BLACK)
+            screen, s, small_font, confirm_rect, BLACK)
 
         pygame.draw.rect(screen, WHITE, yes_button)
         pygame.draw.rect(screen, WHITE, no_button)
