@@ -1,13 +1,12 @@
 import pygame
 
-s = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [2, 2, 3, 2, 2, 3, 2, 2],
-    [2, 1, 1, 2, 1, 1, 2, 2],
-    [4, 1, 1, 3, 1, 1, 2, 2],
-    [1, 1, 1, 1, 1, 1, 1, 1],
-]
+f = open("levels/test.txt", "r")
+s = []
+for c in f.readlines():
+    c = c[:-1].split(", ")
+    c = [int(x) for x in c]
+    s.append(c)
+
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 screen.fill("white")
