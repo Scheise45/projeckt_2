@@ -1,6 +1,12 @@
-0, 0, 0, 0, 0, 0, 0, 0
-1, 1, 1, 1, 1, 1, 1, 1
-2, 2, 0, 0, 0, 3, 2, 2
-2, 1, 1, 0, 1, 1, 2, 2
-4, 1, 1, 3, 1, 1, 3, 2
-1, 1, 1, 1, 1, 1, 1, 1
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
+b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
+b, b, b, b, b, b, b, b, b, bs, b, l, b, b, b, b
+b, b, b, b, b, b, w, w, w, w, b, b, b, b, b, b
+b, b, b, b, b, w, w, w, w, w, b, b, b, b, b, b
+b, b, b, b, w, w, w, w, w, w, l, b, b, b, b, b
+bh, b, b, w, w, w, w, w, w, w, l, b, bs, b, b, b
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
