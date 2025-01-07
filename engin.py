@@ -11,8 +11,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
 # Глобальные переменные
-GRAVITY = 3
-MOVE_SPEED = 3
+MOVE_SPEED = 4
 
 
 def load_image(image_path, size):
@@ -50,13 +49,13 @@ class Hero(BaseSprite):
                 # Увеличиваем высоту прыжка
                 self.jump_height += abs(self.velocity_y)
             else:
-                self.velocity_y = GRAVITY  # Начинаем падать после достижения максимальной высоты
+                self.velocity_y = MOVE_SPEED  # Начинаем падать после достижения максимальной высоты
                 if self.is_on_solid_ground():
                     self.is_jumping = False
 
         # Если герой не в прыжке, проверяем падение
         if not self.is_jumping and not self.is_on_solid_ground():
-            self.velocity_y += GRAVITY  # Включаем гравитацию
+            self.velocity_y = MOVE_SPEED  # Включаем гравитацию
 
         if self.is_on_solid_ground() and not self.is_jumping:
             self.velocity_y = 0  # Если на земле, сбрасываем вертикальную скорость
@@ -155,31 +154,27 @@ class Stone(BaseSprite):
         self.is_moving = False  # Флаг, который будет указывать, пытается ли игрок двигать камень
         self.time_on_stone = 0  # Время, проведённое на другом камне
         self.shaking = False
+        self.onefall = True
 
     def update(self):
         """Обновление состояния камня с учётом падения и движения"""
-        if self.is_moving:
-            return  # Если камень двигается, пропускаем его падение
-
-        # Проверка, стоит ли камень на другом камне
-        if self.is_on_solid_ground() and not self.is_on_falling_surface():
-            self.time_on_stone = 0
-            self.velocity_y = 0
-            return
 
         # Если камень на камне, запускаем таймер
-        if self.is_on_solid_ground():
+        if self.is_on_stone() and self.onefall:
+            self.shaking = True
             self.time_on_stone += 1
-            if self.time_on_stone >= 90:  # 1.5 секунды при 60 FPS
+            if self.time_on_stone >= 90:  # 1.25 секунды при 60 FPS
                 self.shaking = False
+                self.onefall = False
                 self.try_fall_sideways()
+                self.time_on_stone = 0
             else:
                 self.shake()
             return
 
         # Падение, если нет твёрдой поверхности под камнем
-        if self.is_on_falling_surface():
-            self.velocity_y = GRAVITY  # Камень падает
+        if not self.is_on_falling_surface():
+            self.velocity_y = MOVE_SPEED  # Камень падает
 
         # Падение вниз, если не на поверхности
         self.rect.y += self.velocity_y
@@ -201,24 +196,48 @@ class Stone(BaseSprite):
 
     def try_fall_sideways(self):
         """Попытка упасть в сторону, если под камнем нет твердой поверхности."""
-        left_free = self.check_free_space(-self.size, self.size)
-        right_free = self.check_free_space(self.size, self.size)
+        left_free = self.check_free_space(-self.size)
+        right_free = self.check_free_space(self.size)
 
         if left_free and right_free:
             self.rect.x += self.size if random.choice([True, False]) else -self.size
+            print(11)
         elif left_free:
-            self.rect.x -= self.size
+            self.rect.x += -self.size * 0.95
+            print(1)
         elif right_free:
-            self.rect.x += self.size
+            self.rect.x += self.size * 0.95
+            print(2)
+        else:
+            self.rect.x += self.size * 0.03
+            print("e")
 
-    def check_free_space(self, offset_x, offset_y):
-        """Проверяет, свободно ли пространство в указанном направлении."""
-        self.rect.x += offset_x
-        self.rect.y += offset_y
-        collisions = pygame.sprite.spritecollide(self, solid_sprites, False)
+    def check_free_space(self, offset_x):
+        """Проверяет, свободно ли пространство сбоку и снизу.
+        Под проверку попадают только объекты Wall и Stone."""
+        # Смещаемся по оси X для проверки
+        self.rect.x += offset_x*0.9
+        # Исключаем текущий камень из проверки
+        collisions_x = [sprite for sprite in (
+            pygame.sprite.spritecollide(self, solid_sprites, False) +
+            pygame.sprite.spritecollide(self, stone_sprites, False))
+            if sprite != self]
         self.rect.x -= offset_x
-        self.rect.y -= offset_y
-        return not collisions
+
+        # Если на пути есть препятствия по X, пространство не свободно
+        if collisions_x:
+            return False
+
+        # Теперь проверяем, что под камнем (вниз по Y)
+        self.rect.y += self.size*0.9
+        collisions_y = [sprite for sprite in (
+            pygame.sprite.spritecollide(self, solid_sprites, False) +
+            pygame.sprite.spritecollide(self, stone_sprites, False))
+            if sprite != self]
+        self.rect.y -= self.size
+
+        # Пространство считается свободным только если по X свободно и снизу нет препятствий
+        return collisions_y
 
     def push(self, direction):
         """Двигает камень только если это возможно (игрок может толкать)."""
@@ -242,34 +261,36 @@ class Stone(BaseSprite):
     def is_on_solid_ground(self):
         """Проверка, стоит ли камень на твердой поверхности (Stone, Wall)."""
         self.rect.y += 1
-        collisions = pygame.sprite.spritecollide(self, solid_sprites, False) + \
-            pygame.sprite.spritecollide(self, stone_sprites, False)
+        collisions = pygame.sprite.spritecollide(
+            self, solid_sprites, False)  # + \
+        # pygame.sprite.spritecollide(self, stone_sprites, False)
         self.rect.y -= 1
         return any(isinstance(sprite, Wall) for sprite in collisions)
+
+    def is_on_stone(self):
+        """Проверка, стоит ли камень на другом камне из той же группы."""
+        self.rect.y += 1  # Временное смещение вниз для проверки
+        collisions = pygame.sprite.spritecollide(self, stone_sprites, False)
+        self.rect.y -= 1
+
+        # Исключаем сам камень из проверки
+        for sprite in collisions:
+            if sprite != self:
+                return True
+        return False
 
     def is_on_falling_surface(self):
         """Проверка, может ли камень падать (если под ним Liana или Background)."""
         self.rect.y += 1
         collisions = pygame.sprite.spritecollide(self, solid_sprites, False)
         self.rect.y -= 1
-        return not any(isinstance(sprite, (Wall, Stone)) for sprite in collisions)
-
-    def set_moving(self, moving):
-        """Устанавливает флаг движения (для того, чтобы игрок мог двигать камень)."""
-        self.is_moving = moving
+        return any(isinstance(sprite, (Wall, Stone)) for sprite in collisions)
 
 
 class Lianas(BaseSprite):
     def __init__(self, x, y, size):
         super().__init__(x, y, size, 'picture/lianas.png')
 
-
-# Группы спрайтов
-background_sprites = pygame.sprite.Group()
-foreground_sprites = pygame.sprite.Group()
-solid_sprites = pygame.sprite.Group()
-stone_sprites = pygame.sprite.Group()
-hero = None
 
 sprite_classes = {
     "h": Hero,
@@ -278,6 +299,13 @@ sprite_classes = {
     "s": Stone,
     "l": Lianas
 }
+
+# Группы спрайтов
+background_sprites = pygame.sprite.Group()
+foreground_sprites = pygame.sprite.Group()
+solid_sprites = pygame.sprite.Group()
+hero = None
+stone_sprites = pygame.sprite.Group()
 
 
 def load_level(filename):
