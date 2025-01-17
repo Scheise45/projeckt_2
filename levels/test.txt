@@ -2,11 +2,11 @@ w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
 b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
 b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
-b, b, b, b, b, b, b, b, b, bs, b, l, b, b, b, b
-b, b, b, b, b, b, w, w, w, w, b, b, b, b, b, b
-b, b, b, b, b, w, w, w, w, w, b, b, b, b, b, b
-b, b, b, b, w, w, w, w, w, w, l, b, b, b, b, b
-bh, b, b, w, w, w, w, w, w, w, l, b, bs, b, b, b
+b, b, b, b, b, b, b, bs, b, b, b, l, b, b, b, b
+b, b, b, b, b, b, w, w, w, b, b, b, b, b, b, b
+b, b, b, b, b, w, w, w, w, bs, b, b, b, b, b, b
+b, b, b, b, w, w, w, w, w, w, w, b, w, b, b, b
+bh, b, b, w, w, w, w, w, w, w, w, bs, w, b, b, b
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
