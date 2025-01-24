@@ -1,6 +1,7 @@
+import math as m
 import pygame
 import sys
-
+import subprocess
 pygame.init()
 
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -14,10 +15,10 @@ GRAY = (200, 200, 200)
 font = pygame.font.Font(None, 74)
 small_font = pygame.font.Font(None, 30)
 
-buttons = ["Играть", "Настройки", "Выход"]
+buttons = ["Продолжить", "Играть", "Настройки", "Выход"]
 button_rects = []
 
-button_width = 300
+button_width = 350
 button_height = 80
 spacing = 20
 total_height = len(buttons) * button_height + (len(buttons) - 1) * spacing
@@ -85,11 +86,17 @@ def main_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for i, rect in enumerate(button_rects):
                     if rect.collidepoint(event.pos):
-                        if i == 0:  # Играть
-                            print("Начинаем игру!")
-                        elif i == 1:  # Настройки
+                        if i == 0:
+                            # Запуск main.py
+                            subprocess.Popen(['python', 'main.py'])
+                            running = False
+                        if i == 1:  # Играть
+                            # Запуск main.py
+                            subprocess.Popen(['python', 'main.py'])
+                            running = False  # Закрываем текущее окно
+                        elif i == 2:  # Настройки
                             print("Открываем настройки!")
-                        elif i == 2:  # Выход
+                        elif i == 3:  # Выход
                             confirm_exit()
 
         # Рисуем кнопки

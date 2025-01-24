@@ -6,8 +6,8 @@ import random
 pygame.init()
 
 # Настройки экрана
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
 clock = pygame.time.Clock()
 
 # Глобальные переменные
@@ -200,7 +200,8 @@ class Stone(BaseSprite):
         right_free = self.check_free_space(self.size)
 
         if left_free and right_free:
-            self.rect.x += self.size if random.choice([True, False]) else -self.size
+            self.rect.x += self.size if random.choice(
+                [True, False]) else -self.size
             print(11)
         elif left_free:
             self.rect.x += -self.size * 0.95
@@ -292,6 +293,21 @@ class Lianas(BaseSprite):
         super().__init__(x, y, size, 'picture/lianas.png')
 
 
+# Группы спрайтов
+background_sprites = pygame.sprite.Group()
+foreground_sprites = pygame.sprite.Group()
+solid_sprites = pygame.sprite.Group()
+stone_sprites = pygame.sprite.Group()
+
+
+def clear_sprites():
+    background_sprites.empty()  # Очищаем группу фона
+    stone_sprites.empty()       # Очищаем группу камней
+    foreground_sprites.empty()  # Очищаем группу переднего плана
+
+
+hero = None
+
 sprite_classes = {
     "h": Hero,
     "b": Background,
@@ -299,13 +315,6 @@ sprite_classes = {
     "s": Stone,
     "l": Lianas
 }
-
-# Группы спрайтов
-background_sprites = pygame.sprite.Group()
-foreground_sprites = pygame.sprite.Group()
-solid_sprites = pygame.sprite.Group()
-hero = None
-stone_sprites = pygame.sprite.Group()
 
 
 def load_level(filename):
