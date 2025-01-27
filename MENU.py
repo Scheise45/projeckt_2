@@ -1,114 +1,108 @@
-import math as m
 import pygame
 import sys
-import subprocess
-pygame.init()
-
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-screen_width, screen_height = screen.get_size()
-pygame.display.set_caption("Меню")
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-
-font = pygame.font.Font(None, 74)
-small_font = pygame.font.Font(None, 30)
-
-buttons = ["Продолжить", "Играть", "Настройки", "Выход"]
-button_rects = []
-
-button_width = 350
-button_height = 80
-spacing = 20
-total_height = len(buttons) * button_height + (len(buttons) - 1) * spacing
-
-start_y = (screen_height - total_height) // 2
-for i, text in enumerate(buttons):
-    x = (screen_width - button_width) // 2
-    y = start_y + i * (button_height + spacing)
-    rect = pygame.Rect(x, y, button_width, button_height)
-    button_rects.append(rect)
 
 
-def draw_text_centered(surface, text, font, rect, color):
-    text_surf = font.render(text, True, color)
-    text_rect = text_surf.get_rect(center=rect.center)
-    surface.blit(text_surf, text_rect)
+class GameMenu:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen_width, self.screen_height = self.screen.get_size()
+        pygame.display.set_caption("Меню")
 
+        self.WHITE = (255, 255, 255)
+        self.BLACK = (0, 0, 0)
+        self.GRAY = (200, 200, 200)
 
-def confirm_exit():
-    confirm_rect = pygame.Rect(
-        screen_width // 2 - 200, screen_height // 2 - 100, 400, 200)
-    yes_button = pygame.Rect(
-        confirm_rect.x + 50, confirm_rect.y + 120, 120, 50)
-    no_button = pygame.Rect(confirm_rect.x + 230,
-                            confirm_rect.y + 120, 120, 50)
+        self.font = pygame.font.Font(None, 74)
+        self.small_font = pygame.font.Font(None, 30)
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if yes_button.collidepoint(event.pos):
+        self.buttons = ["Продолжить", "Играть", "Настройки", "Выход"]
+        self.button_rects = []
+
+        self.button_width = 350
+        self.button_height = 80
+        self.spacing = 20
+        self.total_height = len(
+            self.buttons) * self.button_height + (len(self.buttons) - 1) * self.spacing
+
+        start_y = (self.screen_height - self.total_height) // 2
+        for i, text in enumerate(self.buttons):
+            x = (self.screen_width - self.button_width) // 2
+            y = start_y + i * (self.button_height + self.spacing)
+            rect = pygame.Rect(x, y, self.button_width, self.button_height)
+            self.button_rects.append(rect)
+
+    def draw_text_centered(self, surface, text, font, rect, color):
+        text_surf = font.render(text, True, color)
+        text_rect = text_surf.get_rect(center=rect.center)
+        surface.blit(text_surf, text_rect)
+
+    def confirm_exit(self):
+        confirm_rect = pygame.Rect(
+            self.screen_width // 2 - 200, self.screen_height // 2 - 100, 400, 200)
+        yes_button = pygame.Rect(
+            confirm_rect.x + 50, confirm_rect.y + 120, 120, 50)
+        no_button = pygame.Rect(confirm_rect.x + 230,
+                                confirm_rect.y + 120, 120, 50)
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif no_button.collidepoint(event.pos):
-                    return
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if yes_button.collidepoint(event.pos):
+                        pygame.quit()
+                        sys.exit()
+                    elif no_button.collidepoint(event.pos):
+                        return
 
-        pygame.draw.rect(screen, GRAY, confirm_rect)
-        pygame.draw.rect(screen, BLACK, confirm_rect, 3)
+            pygame.draw.rect(self.screen, self.GRAY, confirm_rect)
+            pygame.draw.rect(self.screen, self.BLACK, confirm_rect, 3)
 
-        s = "Вы действительно хотите выйти?"
-        draw_text_centered(
-            screen, s, small_font, confirm_rect, BLACK)
+            s = "Вы действительно хотите выйти?"
+            self.draw_text_centered(
+                self.screen, s, self.small_font, confirm_rect, self.BLACK)
 
-        pygame.draw.rect(screen, WHITE, yes_button)
-        pygame.draw.rect(screen, WHITE, no_button)
-        pygame.draw.rect(screen, BLACK, yes_button, 2)
-        pygame.draw.rect(screen, BLACK, no_button, 2)
+            pygame.draw.rect(self.screen, self.WHITE, yes_button)
+            pygame.draw.rect(self.screen, self.WHITE, no_button)
+            pygame.draw.rect(self.screen, self.BLACK, yes_button, 2)
+            pygame.draw.rect(self.screen, self.BLACK, no_button, 2)
 
-        draw_text_centered(screen, "Да", small_font, yes_button, BLACK)
-        draw_text_centered(screen, "Нет", small_font, no_button, BLACK)
+            self.draw_text_centered(
+                self.screen, "Да", self.small_font, yes_button, self.BLACK)
+            self.draw_text_centered(
+                self.screen, "Нет", self.small_font, no_button, self.BLACK)
 
-        pygame.display.flip()
+            pygame.display.flip()
 
+    def main_menu(self):
+        running = True
+        while running:
+            self.screen.fill(self.WHITE)
 
-def main_menu():
-    running = True
-    while running:
-        screen.fill(WHITE)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for i, rect in enumerate(self.button_rects):
+                        if rect.collidepoint(event.pos):
+                            if i == 0:
+                                return True
+                            if i == 1:  # Играть
+                                return True
+                            elif i == 2:  # Настройки
+                                print("Открываем настройки!")
+                            elif i == 3:  # Выход
+                                self.confirm_exit()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                for i, rect in enumerate(button_rects):
-                    if rect.collidepoint(event.pos):
-                        if i == 0:
-                            # Запуск main.py
-                            subprocess.Popen(['python', 'main.py'])
-                            running = False
-                        if i == 1:  # Играть
-                            # Запуск main.py
-                            subprocess.Popen(['python', 'main.py'])
-                            running = False  # Закрываем текущее окно
-                        elif i == 2:  # Настройки
-                            print("Открываем настройки!")
-                        elif i == 3:  # Выход
-                            confirm_exit()
+            # Рисуем кнопки
+            for i, rect in enumerate(self.button_rects):
+                pygame.draw.rect(self.screen, self.GRAY, rect)
+                pygame.draw.rect(self.screen, self.BLACK, rect, 3)
+                self.draw_text_centered(
+                    self.screen, self.buttons[i], self.font, rect, self.BLACK)
 
-        # Рисуем кнопки
-        for i, rect in enumerate(button_rects):
-            pygame.draw.rect(screen, GRAY, rect)
-            pygame.draw.rect(screen, BLACK, rect, 3)
-            draw_text_centered(screen, buttons[i], font, rect, BLACK)
-
-        pygame.display.flip()
+            pygame.display.flip()
 
     pygame.quit()
-
-
-if __name__ == "__main__":
-    main_menu()

@@ -28,13 +28,29 @@ class BaseSprite(Sprite):
 
 class Hero(BaseSprite):
     def __init__(self, x, y, size):
-        super().__init__(x, y, size*0.9, 'picture/hero.png')
+        super().__init__(x, y - int(size * 0.1), size * 0.9, 'picture/hero.png')
+        self.size = size
         self.velocity_y = 0
         self.velocity_x = 0
         self.on_ground = True
         self.is_jumping = False
         self.jump_height = 0
         self.max_jump_height = size * 1.4
+        self.facing_right = True  # Флаг направления взгляда
+
+        # Анимации
+        self.standing_image = pygame.transform.scale(
+            pygame.image.load('picture/hero.png'), (size, size)
+        )
+        self.walking_images = [
+            pygame.transform.scale(
+                pygame.image.load(f'picture/hero{i}.png'), (size, size)
+            ) for i in range(1, 5)
+        ]
+        self.image = self.standing_image
+        self.image_index = 0  # Индекс текущей анимации
+        self.animation_timer = 0  # Таймер для управления частотой смены кадров
+        self.animation_speed = 5  # Скорость смены кадров (чем меньше, тем быстрее)
 
     def update(self):
         """Обновление позиции героя с учетом движения"""
@@ -70,6 +86,9 @@ class Hero(BaseSprite):
         # Ограничение выхода за границы экрана
         self.clamp_to_screen()
 
+        # Обновление анимации
+        self.update_animation()
+
     def handle_input(self):
         """Управление героем"""
         keys = pygame.key.get_pressed()
@@ -77,8 +96,12 @@ class Hero(BaseSprite):
 
         if keys[pygame.K_LEFT]:
             self.velocity_x = -MOVE_SPEED
+            if self.facing_right:
+                self.flip_images()
         if keys[pygame.K_RIGHT]:
             self.velocity_x = MOVE_SPEED
+            if not self.facing_right:
+                self.flip_images()
 
         # Начинаем прыжок, если не в прыжке и если на земле
         if keys[pygame.K_UP] and not self.is_jumping and self.on_ground:
@@ -134,6 +157,26 @@ class Hero(BaseSprite):
         collisions = pygame.sprite.spritecollide(self, solid_sprites, False)
         self.rect.y -= 1
         return bool(collisions)
+
+    def flip_images(self):
+        """Переворот изображений героя при смене направления"""
+        self.facing_right = not self.facing_right
+        self.standing_image = pygame.transform.flip(self.standing_image, True, False)
+        self.walking_images = [
+            pygame.transform.flip(image, True, False)
+            for image in self.walking_images
+        ]
+
+    def update_animation(self):
+        """Обновление текущего кадра анимации"""
+        if self.velocity_x != 0:  # Если герой движется, обновляем анимацию
+            self.animation_timer += 1
+            if self.animation_timer >= self.animation_speed:
+                self.animation_timer = 0
+                self.image_index = (self.image_index + 1) % len(self.walking_images)
+                self.image = self.walking_images[self.image_index]
+        else:
+            self.image = self.standing_image  # Если герой стоит, показываем изображение стоя
 
 
 class Background(BaseSprite):
@@ -291,6 +334,24 @@ class Stone(BaseSprite):
 class Lianas(BaseSprite):
     def __init__(self, x, y, size):
         super().__init__(x, y, size, 'picture/lianas.png')
+
+
+class Camera:
+    def __init__(self, screen_width, screen_height):
+        self.offset_x = 0  # Смещение по оси X
+        self.offset_y = 0  # Смещение по оси Y
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+
+    def update(self, target):
+        """Обновляет положение камеры, удерживая target в центре экрана."""
+        self.offset_x = target.rect.centerx - self.screen_width // 2
+        self.offset_y = target.rect.centery - self.screen_height // 2
+
+    def apply(self, sprite):
+        """Смещение позиции спрайта в зависимости от положения камеры."""
+        sprite.rect.x -= self.offset_x
+        sprite.rect.y -= self.offset_y
 
 
 # Группы спрайтов

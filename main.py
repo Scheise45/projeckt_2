@@ -1,6 +1,6 @@
 import pygame
 import engin as e
-
+import MENU as m
 # Инициализация Pygame
 pygame.init()
 
@@ -8,6 +8,9 @@ pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
 clock = pygame.time.Clock()
+
+# Высота нижней панели
+STATUS_BAR_HEIGHT = 100
 
 # Загрузка уровня
 
@@ -20,7 +23,6 @@ def reset_game():
 reset_game()
 
 # Основные переменные
-running = True
 paused = False
 
 # Шрифты
@@ -62,49 +64,85 @@ def draw_pause_menu():
 
     return button_rects
 
+# Функция для отрисовки статической нижней панели
 
-# Основной игровой цикл
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                paused = not paused  # Переключаем состояние паузы
 
-        if paused:
-            continue_button_rect, restart_button_rect, settings_button_rect, exit_button_rect = draw_pause_menu()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos
-                if continue_button_rect.collidepoint(mouse_pos):
-                    paused = False  # Продолжить игру
-                elif restart_button_rect.collidepoint(mouse_pos):
-                    reset_game()  # Сбросить состояние и заново загрузить уровень
-                    paused = False  # Выход из паузы
-                elif settings_button_rect.collidepoint(mouse_pos):
-                    # Здесь можно добавить функционал настроек
-                    print("Настройки (пока не реализовано)")
-                elif exit_button_rect.collidepoint(mouse_pos):
-                    running = False  # Выйти из игры
+def draw_status_bar(lives, crystals):
+    # Нижняя панель
+    pygame.draw.rect(screen, (0, 128, 0), (0, SCREEN_HEIGHT -
+                     STATUS_BAR_HEIGHT, SCREEN_WIDTH, STATUS_BAR_HEIGHT))
 
-            continue
+    # Отображение жизней и кристаллов
+    lives_text = font.render(f'Жизни: {lives}', True, (255, 255, 255))
+    crystals_text = font.render(
+        f'Кристаллы: {crystals}', True, (255, 255, 255))
 
-    if not paused:
-        e.hero.handle_input()
-        e.hero.update()
-        for stone in e.stone_sprites:
-            stone.update()
+    screen.blit(lives_text, (10, SCREEN_HEIGHT - STATUS_BAR_HEIGHT + 20))
+    screen.blit(crystals_text, (SCREEN_WIDTH - crystals_text.get_width() -
+                10, SCREEN_HEIGHT - STATUS_BAR_HEIGHT + 20))
 
-        # Сначала фон, потом камни, потом передний план
-        e.background_sprites.draw(screen)
-        e.stone_sprites.draw(screen)
-        e.foreground_sprites.draw(screen)
 
-    else:
-        # Отрисовка меню паузы без фона
-        draw_pause_menu()
+camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    pygame.display.flip()
-    clock.tick(60)
 
+def run():
+    running = True
+    paused = False
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    paused = not paused  # Переключаем состояние паузы
+
+            if paused:
+                continue_button_rect, restart_button_rect, settings_button_rect, exit_button_rect = draw_pause_menu()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = event.pos
+                    if continue_button_rect.collidepoint(mouse_pos):
+                        paused = False  # Продолжить игру
+                    elif restart_button_rect.collidepoint(mouse_pos):
+                        reset_game()  # Сбросить состояние и заново загрузить уровень
+                        paused = False  # Выход из паузы
+                    elif settings_button_rect.collidepoint(mouse_pos):
+                        print("Настройки (пока не реализовано)")
+                    elif exit_button_rect.collidepoint(mouse_pos):
+                        running = False  # Выйти из игры
+                        s = menu.main_menu()
+                        if s:
+                            run()
+                continue
+
+        if not paused:
+            screen.fill(0)
+            e.hero.handle_input()
+            e.hero.update()
+            for stone in e.stone_sprites:
+                stone.update()
+
+            camera.update(e.hero)
+
+            for sprite_group in [e.background_sprites, e.stone_sprites, e.foreground_sprites]:
+                for sprite in sprite_group:
+                    camera.apply(sprite)
+
+            e.background_sprites.draw(screen)
+            e.stone_sprites.draw(screen)
+            e.foreground_sprites.draw(screen)
+            # Предполагается наличие атрибутов lives и crystals у героя
+            # draw_status_bar(e.hero.lives, e.hero.crystals)
+        else:
+            draw_pause_menu()
+
+        pygame.display.flip()
+        clock.tick(60)
+
+
+menu = m.GameMenu()
+
+if __name__ == "__main__":
+    s = menu.main_menu()
+    if s:
+        run()
 pygame.quit()
