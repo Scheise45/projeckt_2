@@ -83,7 +83,7 @@ def draw_status_bar(lives, crystals):
 
 def draw_game_over():
     """Отображение экрана GAME OVER"""
-    gamover = pygame.image.load("picture/quest.jpg")
+    gamover = pygame.image.load("picture/gameover.jpg")
     gamover = pygame.transform.scale(gamover, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     instruction_text1 = button_font.render(
@@ -195,7 +195,7 @@ def run():
             e.background_sprites.draw(screen)
             e.stone_sprites.draw(screen)
             e.foreground_sprites.draw(screen)
-            # e.diamond_sprites.draw(screen)
+            e.diamond_sprites.draw(screen)
 
         pygame.display.flip()
         clock.tick(60)
