@@ -11,7 +11,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
 clock = pygame.time.Clock()
 
 # Глобальные переменные
-MOVE_SPEED = 4
+MOVE_SPEED = 7
 
 
 def load_image(image_path, size):
@@ -28,7 +28,7 @@ class BaseSprite(Sprite):
 
 class Hero(BaseSprite):
     def __init__(self, x, y, size):
-        super().__init__(x, y - int(size * 0.1), size * 0.9, 'picture/hero.png')
+        super().__init__(x, y - int(size * 0.2), size * 0.9 , 'picture/hero.png')
         self.size = size
         self.velocity_y = 0
         self.velocity_x = 0
@@ -40,17 +40,18 @@ class Hero(BaseSprite):
 
         # Анимации
         self.standing_image = pygame.transform.scale(
-            pygame.image.load('picture/hero.png'), (size, size)
+            pygame.image.load('picture/hero.png'), (size*0.9, size*0.9)
         )
         self.walking_images = [
             pygame.transform.scale(
-                pygame.image.load(f'picture/hero{i}.png'), (size, size)
+                pygame.image.load(f'picture/hero{i}.png'), (size*0.9, size*0.9)
             ) for i in range(1, 5)
         ]
         self.image = self.standing_image
         self.image_index = 0  # Индекс текущей анимации
         self.animation_timer = 0  # Таймер для управления частотой смены кадров
-        self.animation_speed = 5  # Скорость смены кадров (чем меньше, тем быстрее)
+        # Скорость смены кадров (чем меньше, тем быстрее)
+        self.animation_speed = 5
 
     def update(self):
         """Обновление позиции героя с учетом движения"""
@@ -161,7 +162,8 @@ class Hero(BaseSprite):
     def flip_images(self):
         """Переворот изображений героя при смене направления"""
         self.facing_right = not self.facing_right
-        self.standing_image = pygame.transform.flip(self.standing_image, True, False)
+        self.standing_image = pygame.transform.flip(
+            self.standing_image, True, False)
         self.walking_images = [
             pygame.transform.flip(image, True, False)
             for image in self.walking_images
@@ -173,7 +175,8 @@ class Hero(BaseSprite):
             self.animation_timer += 1
             if self.animation_timer >= self.animation_speed:
                 self.animation_timer = 0
-                self.image_index = (self.image_index + 1) % len(self.walking_images)
+                self.image_index = (self.image_index +
+                                    1) % len(self.walking_images)
                 self.image = self.walking_images[self.image_index]
         else:
             self.image = self.standing_image  # Если герой стоит, показываем изображение стоя
@@ -191,7 +194,7 @@ class Wall(BaseSprite):
 
 class Stone(BaseSprite):
     def __init__(self, x, y, size):
-        super().__init__(x, y, size*0.95, 'picture/stone.png')
+        super().__init__(x, y, size*0.85, 'picture/stone.png')
         self.velocity_y = 0  # Вертикальная скорость для падения
         self.size = size
         self.is_moving = False  # Флаг, который будет указывать, пытается ли игрок двигать камень
@@ -337,16 +340,43 @@ class Lianas(BaseSprite):
 
 
 class Camera:
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height, map_w, map_h):
         self.offset_x = 0  # Смещение по оси X
         self.offset_y = 0  # Смещение по оси Y
+        self.map_w = map_w
+        self.map_h = map_h
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.last_offset_x = 0  # последнее смещение
+        self.summ_offset_x = 0  # координаты
+        self.summ_offset_y = 0
+        self.last_offset_y = 0
 
     def update(self, target):
         """Обновляет положение камеры, удерживая target в центре экрана."""
+        self.way_x = 902
+        self.way_y = -571
         self.offset_x = target.rect.centerx - self.screen_width // 2
         self.offset_y = target.rect.centery - self.screen_height // 2
+        if self.summ_offset_x < self.way_x:
+            self.summ_offset_x = self.offset_x + self.way_x
+            self.offset_x = 0
+        elif self.summ_offset_x > self.map_w - 1020:
+            self.summ_offset_x += (self.offset_x - self.last_offset_x)
+            self.last_offset_x = self.offset_x
+            self.offset_x = 0
+        else:
+            self.summ_offset_x += self.offset_x
+
+        if self.summ_offset_y < self.way_y:
+            self.summ_offset_y = self.offset_y + self.way_y
+            self.offset_y = 0
+        elif self.summ_offset_y > self.map_h - 560:
+            self.summ_offset_y += (self.offset_y - self.last_offset_y)
+            self.last_offset_y = self.offset_y
+            self.offset_y = 0
+        else:
+            self.summ_offset_y += self.offset_y
 
     def apply(self, sprite):
         """Смещение позиции спрайта в зависимости от положения камеры."""
@@ -384,7 +414,7 @@ def load_level(filename):
         lines = [line.strip().split(', ') for line in file]
 
     rows, cols = len(lines), len(lines[0])
-    tile_size = min(SCREEN_WIDTH // cols, SCREEN_HEIGHT // rows)
+    tile_size = 130
 
     for row_index, line in enumerate(lines):
         for col_index, tile in enumerate(line):

@@ -78,8 +78,16 @@ class GameMenu:
 
     def main_menu(self):
         running = True
+
+        # Загружаем изображение фона
+        background_image = pygame.image.load("picture/formenu.jpg")
+        # Масштабируем изображение на весь экран
+        background_image = pygame.transform.scale(
+            background_image, (self.screen_width, self.screen_height))
+
         while running:
-            self.screen.fill(self.WHITE)
+            # Отображаем фон
+            self.screen.blit(background_image, (0, 0))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

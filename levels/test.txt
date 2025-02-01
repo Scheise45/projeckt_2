@@ -2,7 +2,7 @@ w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w,
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
 b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
 b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
-b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b, b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b, b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b
+bs, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b, b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b, b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b
 b, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b
