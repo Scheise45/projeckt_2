@@ -16,7 +16,6 @@ STATUS_BAR_HEIGHT = 100
 
 
 def reset_game():
-    e.clear_sprites()  # Очистка всех спрайтов (если такая функция есть)
     e.load_level('levels/test.txt')  # Загрузка уровня
 
 
@@ -87,8 +86,10 @@ def draw_game_over():
     gamover = pygame.image.load("picture/quest.jpg")
     gamover = pygame.transform.scale(gamover, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    instruction_text1 = button_font.render("ЛКМ: Начать сначало", True, (255, 255, 255))
-    instruction_text2 = button_font.render("ПКМ: Вернуться в меню", True, (255, 255, 255))
+    instruction_text1 = button_font.render(
+        "ЛКМ: Начать сначало", True, (255, 255, 255))
+    instruction_text2 = button_font.render(
+        "ПКМ: Вернуться в меню", True, (255, 255, 255))
 
     screen.blit(gamover, (0, 0))  # Отображаем картинку на весь экран
     screen.blit(instruction_text1, instruction_text1.get_rect(
@@ -167,6 +168,9 @@ def run():
             e.hero.handle_input()
             e.hero.update()
 
+            # for diamond in e.diamond_sprites:
+            #     diamond.update()
+
             for stone in e.stone_sprites:
                 stone.update()
                 # Проверка на падение камня на героя
@@ -181,13 +185,17 @@ def run():
 
             camera.update(e.hero)
 
-            for sprite_group in [e.background_sprites, e.stone_sprites, e.foreground_sprites]:
+            all_sp_group = [e.background_sprites, e.stone_sprites,
+                            e.diamond_sprites, e.foreground_sprites]
+
+            for sprite_group in all_sp_group:
                 for sprite in sprite_group:
                     camera.apply(sprite)
 
             e.background_sprites.draw(screen)
             e.stone_sprites.draw(screen)
             e.foreground_sprites.draw(screen)
+            # e.diamond_sprites.draw(screen)
 
         pygame.display.flip()
         clock.tick(60)

@@ -1,6 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 import random
+import math
 
 # Инициализация Pygame
 pygame.init()
@@ -28,7 +29,7 @@ class BaseSprite(Sprite):
 
 class Hero(BaseSprite):
     def __init__(self, x, y, size):
-        super().__init__(x, y - int(size * 0.2), size * 0.9 , 'picture/hero.png')
+        super().__init__(x, y - int(size * 0.2), size * 0.9, 'picture/hero.png')
         self.size = size
         self.velocity_y = 0
         self.velocity_x = 0
@@ -339,6 +340,23 @@ class Lianas(BaseSprite):
         super().__init__(x, y, size, 'picture/lianas.png')
 
 
+class Diamond(BaseSprite):
+    def __init__(self, x, y, size):
+        super().__init__(x + size * 0.25, y + size *
+                         0.25, size * 0.5, "picture/diamond.png")
+        self.start_y = self.rect.y
+        self.offset = 0
+        self.direction = 1  # 1 — вверх, -1 — вниз
+        self.speed = 0.1 * size  # Смещение за кадр
+        self.amplitude = 3  # Максимальное смещение
+
+    def update(self):
+        self.offset += self.direction * self.speed
+        if abs(self.offset) >= self.amplitude:
+            self.direction *= -1  # Меняем направление движения
+        self.rect.y = self.start_y + self.offset
+
+
 class Camera:
     def __init__(self, screen_width, screen_height, map_w, map_h):
         self.offset_x = 0  # Смещение по оси X
@@ -389,6 +407,7 @@ background_sprites = pygame.sprite.Group()
 foreground_sprites = pygame.sprite.Group()
 solid_sprites = pygame.sprite.Group()
 stone_sprites = pygame.sprite.Group()
+diamond_sprites = pygame.sprite.Group()
 
 
 def clear_sprites():
@@ -404,7 +423,8 @@ sprite_classes = {
     "b": Background,
     "w": Wall,
     "s": Stone,
-    "l": Lianas
+    "l": Lianas,
+    'd': Diamond
 }
 
 
@@ -415,6 +435,13 @@ def load_level(filename):
 
     rows, cols = len(lines), len(lines[0])
     tile_size = 130
+
+    # Очищаем группы перед загрузкой уровня
+    background_sprites.empty()
+    foreground_sprites.empty()
+    solid_sprites.empty()
+    stone_sprites.empty()
+    diamond_sprites.empty()  # Очищаем алмазы перед загрузкой
 
     for row_index, line in enumerate(lines):
         for col_index, tile in enumerate(line):
@@ -432,3 +459,5 @@ def load_level(filename):
                         foreground_sprites.add(sprite)
                     elif isinstance(sprite, Stone):
                         stone_sprites.add(sprite)
+                    elif isinstance(sprite, Diamond):  # Добавляем алмазы
+                        diamond_sprites.add(sprite)
