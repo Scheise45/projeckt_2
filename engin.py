@@ -38,6 +38,9 @@ class Hero(BaseSprite):
         self.jump_height = 0
         self.max_jump_height = size * 1.4
         self.facing_right = True  # Флаг направления взгляда
+        self.collected_diamonds = 0  # Счётчик собранных кристаллов
+        # Общее количество кристаллов на уровне
+        self.TOTAL_DIAMONDS = len(diamond_sprites)
 
         # Анимации
         self.standing_image = pygame.transform.scale(
@@ -59,6 +62,9 @@ class Hero(BaseSprite):
         # Движение по горизонтали
         self.rect.x += self.velocity_x
         self.handle_collisions('horizontal')
+
+        # Проверка столкновения с алмазами
+        self.collect_diamonds()
 
         # Если герой в прыжке, проверяем, достиг ли он максимальной высоты
         if self.is_jumping:
@@ -90,6 +96,19 @@ class Hero(BaseSprite):
 
         # Обновление анимации
         self.update_animation()
+
+    def collect_diamonds(self):
+        """Сбор кристаллов"""
+        diamond_collisions = pygame.sprite.spritecollide(
+            self, diamond_sprites, True)
+        self.collected_diamonds += len(diamond_collisions)
+        self.display_diamond_count()
+
+    def display_diamond_count(self):
+        """Вывод количества собранных и оставшихся кристаллов"""
+        remaining_diamonds = self.TOTAL_DIAMONDS - self.collected_diamonds
+        print(f"Собрано кристаллов: {self.collected_diamonds}")
+        print(f"Осталось кристаллов: {remaining_diamonds}")
 
     def handle_input(self):
         """Управление героем"""
@@ -344,17 +363,11 @@ class Diamond(BaseSprite):
     def __init__(self, x, y, size):
         super().__init__(x + size * 0.25, y + size *
                          0.25, size * 0.5, "picture/diamond.png")
-        self.start_y = self.rect.y
-        self.offset = 0
-        self.direction = 1  # 1 — вверх, -1 — вниз
-        self.speed = 0.1 * size  # Смещение за кадр
-        self.amplitude = 3  # Максимальное смещение
 
-    def update(self):
-        self.offset += self.direction * self.speed
-        if abs(self.offset) >= self.amplitude:
-            self.direction *= -1  # Меняем направление движения
-        self.rect.y = self.start_y + self.offset
+
+class Exit(BaseSprite):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, "picture/exit.png")
 
 
 class Camera:
@@ -408,6 +421,7 @@ foreground_sprites = pygame.sprite.Group()
 solid_sprites = pygame.sprite.Group()
 stone_sprites = pygame.sprite.Group()
 diamond_sprites = pygame.sprite.Group()
+exit_sprites = pygame.sprite.Group()
 
 
 def clear_sprites():
@@ -424,7 +438,8 @@ sprite_classes = {
     "w": Wall,
     "s": Stone,
     "l": Lianas,
-    'd': Diamond
+    'd': Diamond,
+    "e": Exit
 }
 
 
@@ -451,6 +466,8 @@ def load_level(filename):
                     sprite = sprite_classes[symbol](x, y, tile_size)
                     if isinstance(sprite, (Background, Lianas)):
                         background_sprites.add(sprite)
+                    elif isinstance(sprite, Exit):
+                        exit_sprites.add(sprite)
                     elif isinstance(sprite, Hero):
                         hero = sprite
                         foreground_sprites.add(sprite)

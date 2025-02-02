@@ -152,7 +152,8 @@ def run():
                         paused = False  # Продолжить игру
                     elif restart_button_rect.collidepoint(mouse_pos):
                         reset_game()  # Сбросить состояние и заново загрузить уровень
-                        camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 48*130, 20*130)
+                        camera = e.Camera(
+                            SCREEN_WIDTH, SCREEN_HEIGHT, 48*130, 20*130)
                         paused = False  # Выход из паузы
                     elif settings_button_rect.collidepoint(mouse_pos):
                         print("Настройки (пока не реализовано)")
@@ -187,13 +188,14 @@ def run():
             camera.update(e.hero)
 
             all_sp_group = [e.background_sprites, e.stone_sprites,
-                            e.diamond_sprites, e.foreground_sprites]
+                            e.diamond_sprites, e.foreground_sprites, e.exit_sprites]
 
             for sprite_group in all_sp_group:
                 for sprite in sprite_group:
                     camera.apply(sprite)
 
             e.background_sprites.draw(screen)
+            e.exit_sprites.draw(screen)
             e.stone_sprites.draw(screen)
             e.foreground_sprites.draw(screen)
             e.diamond_sprites.draw(screen)
