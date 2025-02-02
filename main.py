@@ -16,7 +16,7 @@ STATUS_BAR_HEIGHT = 100
 
 
 def reset_game():
-    e.load_level('levels/test.txt')  # Загрузка уровня
+    e.load_level('levels/second.txt')  # Загрузка уровня
 
 
 reset_game()
