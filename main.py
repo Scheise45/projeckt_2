@@ -101,7 +101,7 @@ def draw_game_over():
 
 
 def run():
-    camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 21*130, 9*130)
+    camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 48*130, 20*130)
     # Загрузка изображения для заставки
     quest_image = pygame.image.load("picture/quest.jpg")
     quest_image = pygame.transform.scale(
@@ -152,6 +152,7 @@ def run():
                         paused = False  # Продолжить игру
                     elif restart_button_rect.collidepoint(mouse_pos):
                         reset_game()  # Сбросить состояние и заново загрузить уровень
+                        camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 48*130, 20*130)
                         paused = False  # Выход из паузы
                     elif settings_button_rect.collidepoint(mouse_pos):
                         print("Настройки (пока не реализовано)")
