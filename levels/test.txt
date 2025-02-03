@@ -4,7 +4,7 @@ b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l,
 b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b, b, b, b, b, b, b, b, b, b, b, l, l, b, b, b, b
 bs, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b, b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b, b, b, b, b, bs, b, b, bs, b, b, b, ls, b, b, b, b
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b
-b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, bd, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, bd, b, b, b, b, b, b, b
+b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, bd, b, b, b, b, b, b, b
 b, b, b, bd, b, b, b, b, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b
 bh, b, b, w, bs, b, b, bs, w, w, b, bs, w, bs, b, b, b, b, bd, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, e, b
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w

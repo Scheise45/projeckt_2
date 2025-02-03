@@ -5,14 +5,14 @@ w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w,
 b, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b
 b, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, bs, b, b, w, w, w, w, w, w, w, w, w, w, w, w, b, b, b, b, b, b, b, b, b
 b, w, b, b, b, b, b, b, w, w, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, b, w, b, b, b, w, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b
-b, w, b, b, b, bs, b, w, w, w, b, b, b, b, b, b, b, b, b, b, b, b, bs, b, w, w, b, b, b, b, b, bs, b, b, b, bs, b, bs, b, b, b, w, w, b, b, b, b, b
+b, w, e, b, b, bs, b, w, w, w, b, b, b, b, b, b, b, b, b, b, b, b, bs, b, w, w, b, b, b, b, b, bs, b, b, b, bs, b, bs, b, b, b, w, w, b, b, b, b, b
 b, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, b, b, b, w
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, w
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, bs, w, w
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, bs, b, b, w, b, b, b, b, b, b, b, bs, b, b, b, b, b, b, b, b, b, w, b, b
 b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, w, b, b, b, w, b, b, b, w, b, b, b, b, b, b, b, b, bs, w, b, b
-b, b, b, b, b, b, b, b, b, b, b, b, w, b, b, b, b, b, b, b, b, b, bs, b, w, b, b, w, b, b, b, w, b, b, b, w, b, b, w, b, b, b, b, b, w, w, b, b
-b, b, b, b, b, w, b, b, b, b, b, w, w, b, b, b, b, w, b, b, b, b, w, b, w, b, b, w, b, b, b, w, b, b, b, w, b, b, w, b, b, b, bs, w, w, w, b, b
+b, b, b, b, b, bd, b, b, b, b, b, b, w, b, b, b, b, b, b, b, b, b, bs, b, w, b, b, w, b, b, b, w, b, b, b, w, b, b, w, b, b, b, b, b, w, w, b, b
+b, b, b, b, b, w, b, b, bd, b, b, w, w, b, b, b, b, w, b, b, b, b, w, b, w, b, b, w, b, b, b, w, b, b, b, w, b, b, w, b, b, b, bs, w, w, w, b, b
 bh, b, b, b, w, w, w, b, b, b, w, w, w, b, bs, b, b, w, b, b, b, w, w, w, w, b, b, w, b, b, b, w, b, b, b, w, b, b, w, b, bs, w, w, w, w, w, b, b
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
 w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w

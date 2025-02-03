@@ -1,7 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
 import random
-import math
 
 # Инициализация Pygame
 pygame.init()
@@ -37,10 +36,16 @@ class Hero(BaseSprite):
         self.is_jumping = False
         self.jump_height = 0
         self.max_jump_height = size * 1.4
-        self.facing_right = True  # Флаг направления взгляда
-        self.collected_diamonds = 0  # Счётчик собранных кристаллов
-        # Общее количество кристаллов на уровне
+        self.facing_right = True
+        self.collected_diamonds = 0
         self.TOTAL_DIAMONDS = len(diamond_sprites)
+
+        # Загрузка звука шагов
+        self.step_sound = pygame.mixer.Sound('volume/step.mp3')
+        self.step_sound.set_volume(1)  # Громкость (0.0 - 1.0)
+
+        # Флаг движения
+        self.is_moving = False
 
         # Анимации
         self.standing_image = pygame.transform.scale(
@@ -52,9 +57,8 @@ class Hero(BaseSprite):
             ) for i in range(1, 5)
         ]
         self.image = self.standing_image
-        self.image_index = 0  # Индекс текущей анимации
-        self.animation_timer = 0  # Таймер для управления частотой смены кадров
-        # Скорость смены кадров (чем меньше, тем быстрее)
+        self.image_index = 0
+        self.animation_timer = 0
         self.animation_speed = 5
 
     def update(self):
@@ -107,20 +111,21 @@ class Hero(BaseSprite):
     def display_diamond_count(self):
         """Вывод количества собранных и оставшихся кристаллов"""
         remaining_diamonds = self.TOTAL_DIAMONDS - self.collected_diamonds
-        print(f"Собрано кристаллов: {self.collected_diamonds}")
-        print(f"Осталось кристаллов: {remaining_diamonds}")
 
     def handle_input(self):
         """Управление героем"""
         keys = pygame.key.get_pressed()
         self.velocity_x = 0
+        self.is_moving = False  # Сбрасываем флаг перед проверкой
 
         if keys[pygame.K_LEFT]:
             self.velocity_x = -MOVE_SPEED
+            self.is_moving = True  # Герой движется влево
             if self.facing_right:
                 self.flip_images()
         if keys[pygame.K_RIGHT]:
             self.velocity_x = MOVE_SPEED
+            self.is_moving = True  # Герой движется вправо
             if not self.facing_right:
                 self.flip_images()
 
@@ -190,16 +195,21 @@ class Hero(BaseSprite):
         ]
 
     def update_animation(self):
-        """Обновление текущего кадра анимации"""
-        if self.velocity_x != 0:  # Если герой движется, обновляем анимацию
+        """Обновление текущего кадра анимации и звука шагов"""
+        if self.is_moving:  # Если герой двигается
             self.animation_timer += 1
             if self.animation_timer >= self.animation_speed:
                 self.animation_timer = 0
                 self.image_index = (self.image_index +
                                     1) % len(self.walking_images)
                 self.image = self.walking_images[self.image_index]
+
+                # Воспроизводим звук, если он ещё не играет
+                if not self.step_sound.get_num_channels():
+                    self.step_sound.play()
         else:
-            self.image = self.standing_image  # Если герой стоит, показываем изображение стоя
+            self.image = self.standing_image
+            self.step_sound.stop()  # Останавливаем звук, если герой перестал двигаться
 
 
 class Background(BaseSprite):
@@ -268,16 +278,12 @@ class Stone(BaseSprite):
         if left_free and right_free:
             self.rect.x += self.size if random.choice(
                 [True, False]) else -self.size
-            print(11)
         elif left_free:
             self.rect.x += -self.size * 0.95
-            print(1)
         elif right_free:
             self.rect.x += self.size * 0.95
-            print(2)
         else:
             self.rect.x += self.size * 0.03
-            print("e")
 
     def check_free_space(self, offset_x):
         """Проверяет, свободно ли пространство сбоку и снизу.
@@ -424,6 +430,9 @@ diamond_sprites = pygame.sprite.Group()
 exit_sprites = pygame.sprite.Group()
 
 
+# volume_on = m.sound_on
+
+
 def clear_sprites():
     background_sprites.empty()  # Очищаем группу фона
     stone_sprites.empty()       # Очищаем группу камней
@@ -443,6 +452,15 @@ sprite_classes = {
 }
 
 
+def clear_group():
+    background_sprites.empty()
+    foreground_sprites.empty()
+    solid_sprites.empty()
+    stone_sprites.empty()
+    diamond_sprites.empty()  # Очищаем алмазы перед загрузкой
+    exit_sprites.empty()
+
+
 def load_level(filename):
     global hero
     with open(filename, 'r') as file:
@@ -457,6 +475,7 @@ def load_level(filename):
     solid_sprites.empty()
     stone_sprites.empty()
     diamond_sprites.empty()  # Очищаем алмазы перед загрузкой
+    exit_sprites.empty()
 
     for row_index, line in enumerate(lines):
         for col_index, tile in enumerate(line):

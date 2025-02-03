@@ -98,7 +98,7 @@ class GameMenu:
                             if i == 0:
                                 return True
                             if i == 1:  # Играть
-                                return True
+                                return False
                             elif i == 2:  # Настройки
                                 print("Открываем настройки!")
                             elif i == 3:  # Выход
