@@ -12,14 +12,41 @@ clock = pygame.time.Clock()
 
 # Высота нижней панели
 STATUS_BAR_HEIGHT = 100
-
+lvls = ["test", "second"]
 # Загрузка уровня
-def rewrite_settings():
-    r = list(csv.reader(open("levels/settings.csv")))
-    r[1][2] = "0"
+
+
+def rewrite_settings_volume():
+    with open("levels/settings.csv", newline='', encoding='utf-8') as f:
+        r = list(csv.reader(f))  # Читаем текущие настройки
+        if len(r) > 1:
+            r[1][0] = str(int(music_on))
+
     with open("levels/settings.csv", "w", newline='', encoding='utf-8') as f:
         writ = csv.writer(f)
-        writ.writerows(r)
+        writ.writerows(r)  # Записываем обновлённые данные
+
+
+def rewrite_settings(arg):
+    with open("levels/settings.csv", newline='', encoding='utf-8') as f:
+        r = list(csv.reader(f))  # Читаем текущие настройки
+
+    if len(r) > 1:  # Проверяем, что есть данные
+        r[1][2] = str(arg)  # Обновляем lastlvl
+
+    with open("levels/settings.csv", "w", newline='', encoding='utf-8') as f:
+        writ = csv.writer(f)
+        writ.writerows(r)  # Записываем обновлённые данные
+
+
+def load():
+    with open("levels/settings.csv") as qq:
+        reader = csv.DictReader(qq, delimiter=',', quotechar='"')
+        settings = sorted(reader, reverse=True)
+    for i in settings:
+        lvl = int(i["lastlvl"])
+    return lvls[lvl]
+
 
 def reset_game(map="test"):
     e.load_level(f'levels/{map}.txt')  # Загрузка уровня
@@ -33,8 +60,13 @@ font = pygame.font.Font(None, 74)
 button_font = pygame.font.Font(None, 50)
 
 # Переменные для управления звуком
-music_on = True
-sound_on = True
+with open("levels/settings.csv") as qq:
+    reader = csv.DictReader(qq, delimiter=',', quotechar='"')
+    settings = sorted(reader, reverse=True)
+    for i in settings:
+        music_on = bool(int(i["music"]))
+        sound_on = bool(i["interface"])
+
 
 # Запуск фоновой музыки
 pygame.mixer.music.load("volume/music2.mp3")  # Загружаем музыку
@@ -77,19 +109,28 @@ def draw_pause_menu():
 # Функция для отрисовки статической нижней панели
 
 
-def draw_status_bar(lives, crystals):
+def draw_status_bar(flag=False):
     # Нижняя панель
-    pygame.draw.rect(screen, (0, 128, 0), (0, SCREEN_HEIGHT -
-                     STATUS_BAR_HEIGHT, SCREEN_WIDTH, STATUS_BAR_HEIGHT))
+    if flag:
+        TOTAL = len(e.diamond_sprites)
+        pygame.draw.rect(screen, (0, 90, 0), (0, SCREEN_HEIGHT -
+                                              STATUS_BAR_HEIGHT, SCREEN_WIDTH, STATUS_BAR_HEIGHT))
 
-    # Отображение жизней и кристаллов
-    lives_text = font.render(f'Жизни: {lives}', True, (255, 255, 255))
-    crystals_text = font.render(
-        f'Кристаллы: {crystals}', True, (255, 255, 255))
+        crystals_text = font.render(
+            f'Недостаточно кристаллов для завершения, найдите ещё: {TOTAL}', True, (255, 255, 255))
 
-    screen.blit(lives_text, (10, SCREEN_HEIGHT - STATUS_BAR_HEIGHT + 20))
-    screen.blit(crystals_text, (SCREEN_WIDTH - crystals_text.get_width() -
-                10, SCREEN_HEIGHT - STATUS_BAR_HEIGHT + 20))
+        screen.blit(crystals_text, (SCREEN_WIDTH - crystals_text.get_width() -
+                    10, SCREEN_HEIGHT - STATUS_BAR_HEIGHT + 20))
+    else:
+        TOTAL = len(e.diamond_sprites)
+        pygame.draw.rect(screen, (0, 90, 0), (0, SCREEN_HEIGHT -
+                                              STATUS_BAR_HEIGHT, SCREEN_WIDTH, STATUS_BAR_HEIGHT))
+
+        crystals_text = font.render(
+            f'Кристаллов осталось: {TOTAL}', True, (255, 255, 255))
+
+        screen.blit(crystals_text, (SCREEN_WIDTH - crystals_text.get_width() -
+                    10, SCREEN_HEIGHT - STATUS_BAR_HEIGHT + 20))
 
 
 def draw_game_over():
@@ -155,21 +196,12 @@ def draw_settings_menu():
     pygame.draw.rect(screen, (50, 50, 50), music_button_rect.inflate(20, 10))
     screen.blit(music_button_surface, music_button_rect)
 
-    # Кнопка для включения/выключения звуков
-    sound_button_text = "Звуки: Включены" if sound_on else "Звуки: Выключены"
-    sound_button_surface = button_font.render(
-        sound_button_text, True, (255, 255, 255))
-    sound_button_rect = sound_button_surface.get_rect(
-        center=(SCREEN_WIDTH // 2, settings_rect.top + 200))
-
-    pygame.draw.rect(screen, (50, 50, 50), sound_button_rect.inflate(20, 10))
-    screen.blit(sound_button_surface, sound_button_rect)
-
-    return music_button_rect, sound_button_rect
+    return music_button_rect
 
 
 def run(map):
     reset_game(map)
+    diamond_for_end = len(e.diamond_sprites) // 2
     camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 48 * 130, 20 * 130)
     in_settings_menu = False
 
@@ -178,7 +210,7 @@ def run(map):
     quest_image = pygame.transform.scale(
         quest_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
     start_time = pygame.time.get_ticks()
-    while pygame.time.get_ticks() - start_time < 500:
+    while pygame.time.get_ticks() - start_time < 1000:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -193,6 +225,7 @@ def run(map):
     end_levle = False
 
     while running:
+        of_exit = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -205,8 +238,12 @@ def run(map):
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
                     if event.button == 1:
+                        arg = (lvls.index(map)+1) % 2
+                        map = lvls[arg]
                         reset_game(map)
-                        camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 48 * 130, 20 * 130)
+                        rewrite_settings(arg)
+                        camera = e.Camera(
+                            SCREEN_WIDTH, SCREEN_HEIGHT, 48 * 130, 20 * 130)
                         end_levle = False
 
                     elif event.button == 3:
@@ -215,8 +252,8 @@ def run(map):
                             reset_game(map)
                             run(map)
                         else:
-                            rewrite_settings()
-                            run("test")
+                            rewrite_settings(0)
+                            run(lvls[0])
                         running = False
                 continue
 
@@ -225,7 +262,8 @@ def run(map):
 
                     if event.button == 1:
                         reset_game(map)
-                        camera = e.Camera(SCREEN_WIDTH, SCREEN_HEIGHT, 48 * 130, 20 * 130)
+                        camera = e.Camera(
+                            SCREEN_WIDTH, SCREEN_HEIGHT, 48 * 130, 20 * 130)
                         game_over = False
 
                     elif event.button == 3:
@@ -234,22 +272,21 @@ def run(map):
                             reset_game(map)
                             run(map)
                         else:
-                            rewrite_settings()
-                            run("test")
+                            rewrite_settings(0)
+                            run(lvls[0])
                         running = False
                 continue
 
             elif in_settings_menu:
-                music_button_rect, sound_button_rect = draw_settings_menu()
+                music_button_rect = draw_settings_menu()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
                     if music_button_rect.collidepoint(mouse_pos):
                         global music_on
                         music_on = not music_on
-                        pygame.mixer.music.set_volume(0.15 if music_on else 0.0)
-                    elif sound_button_rect.collidepoint(mouse_pos):
-                        global sound_on
-                        sound_on = not sound_on
+                        pygame.mixer.music.set_volume(
+                            0.15 if music_on else 0.0)
+                        rewrite_settings_volume()
 
             else:
                 if paused:
@@ -268,7 +305,12 @@ def run(map):
                         elif exit_button_rect.collidepoint(mouse_pos):
                             running = False
                             reset_game(map)
-                            menu.main_menu()
+                            s = menu.main_menu()
+                            if not s:
+                                arg = 0
+                                map = lvls[arg]
+                                reset_game(map)
+                                rewrite_settings(arg)
                             run(map)
                     continue
 
@@ -288,9 +330,12 @@ def run(map):
             """Обработка конца уровня"""
             for exit in e.exit_sprites:
                 if pygame.sprite.collide_rect(exit, e.hero):
-                    end_levle = True
-                    draw_end_level()
-                    break
+                    if len(e.diamond_sprites) <= diamond_for_end:
+                        end_levle = True
+                        draw_end_level()
+                        break
+                    else:
+                        of_exit = True
 
             if game_over:
                 continue
@@ -313,6 +358,8 @@ def run(map):
             e.foreground_sprites.draw(screen)
             e.diamond_sprites.draw(screen)
 
+            draw_status_bar(of_exit)
+
         pygame.display.flip()
         clock.tick(60)
 
@@ -324,14 +371,9 @@ menu = m.GameMenu()
 if __name__ == "__main__":
     s = menu.main_menu()
     if not s:
-        rewrite_settings()
-    with open("levels/settings.csv") as qq:
-        reader = csv.DictReader(qq, delimiter=',', quotechar='"')
-        settings = sorted(reader, reverse=True)
-    for i in settings:
-        lvl = int(i["lastlvl"])
-    lvls = ["test", "second"]
+        rewrite_settings(0)
+    lvl = load()
 
-    run(lvls[lvl])
+    run(lvl)
 
 pygame.quit()

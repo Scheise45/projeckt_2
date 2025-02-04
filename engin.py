@@ -405,16 +405,6 @@ class Camera:
         else:
             self.summ_offset_x += self.offset_x
 
-        if self.summ_offset_y < self.way_y:
-            self.summ_offset_y = self.offset_y + self.way_y
-            self.offset_y = 0
-        elif self.summ_offset_y > self.map_h - 560:
-            self.summ_offset_y += (self.offset_y - self.last_offset_y)
-            self.last_offset_y = self.offset_y
-            self.offset_y = 0
-        else:
-            self.summ_offset_y += self.offset_y
-
     def apply(self, sprite):
         """Смещение позиции спрайта в зависимости от положения камеры."""
         sprite.rect.x -= self.offset_x
@@ -450,15 +440,6 @@ sprite_classes = {
     'd': Diamond,
     "e": Exit
 }
-
-
-def clear_group():
-    background_sprites.empty()
-    foreground_sprites.empty()
-    solid_sprites.empty()
-    stone_sprites.empty()
-    diamond_sprites.empty()  # Очищаем алмазы перед загрузкой
-    exit_sprites.empty()
 
 
 def load_level(filename):

@@ -16,7 +16,7 @@ class GameMenu:
         self.font = pygame.font.Font(None, 74)
         self.small_font = pygame.font.Font(None, 30)
 
-        self.buttons = ["Продолжить", "Играть", "Настройки", "Выход"]
+        self.buttons = ["Продолжить", "Играть",  "Выход"]
         self.button_rects = []
 
         self.button_width = 350
@@ -100,7 +100,7 @@ class GameMenu:
                             if i == 1:  # Играть
                                 return False
                             elif i == 2:  # Настройки
-                                print("Открываем настройки!")
+                                self.confirm_exit()
                             elif i == 3:  # Выход
                                 self.confirm_exit()
 
