@@ -398,7 +398,7 @@ class Camera:
         if self.summ_offset_x < self.way_x:
             self.summ_offset_x = self.offset_x + self.way_x
             self.offset_x = 0
-        elif self.summ_offset_x > self.map_w - 1020:
+        elif self.summ_offset_x > self.map_w - SCREEN_WIDTH//2:
             self.summ_offset_x += (self.offset_x - self.last_offset_x)
             self.last_offset_x = self.offset_x
             self.offset_x = 0
